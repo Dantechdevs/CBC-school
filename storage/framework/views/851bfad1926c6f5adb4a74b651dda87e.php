@@ -1,7 +1,6 @@
-@extends('components.layouts.admin')
-@section('header', 'Admin Dashboard')
+<?php $__env->startSection('header', 'Admin Dashboard'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <div class="bg-white rounded-xl shadow p-6 border-l-4 border-green-500">
@@ -29,12 +28,12 @@
     <div class="bg-white rounded-xl shadow p-6">
         <h3 class="font-semibold text-gray-700 mb-4">CBC Assessment Overview</h3>
         <div class="flex gap-4">
-            @foreach(['EE' => 'green', 'ME' => 'blue', 'AE' => 'yellow', 'BE' => 'red'] as $level => $color)
-            <div class="flex-1 text-center p-3 bg-{{ $color }}-50 rounded-lg">
-                <div class="text-2xl font-bold text-{{ $color }}-700">—</div>
-                <div class="text-xs text-{{ $color }}-600 font-medium">{{ $level }}</div>
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = ['EE' => 'green', 'ME' => 'blue', 'AE' => 'yellow', 'BE' => 'red']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $level => $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <div class="flex-1 text-center p-3 bg-<?php echo e($color); ?>-50 rounded-lg">
+                <div class="text-2xl font-bold text-<?php echo e($color); ?>-700">—</div>
+                <div class="text-xs text-<?php echo e($color); ?>-600 font-medium"><?php echo e($level); ?></div>
             </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         </div>
     </div>
     <div class="bg-white rounded-xl shadow p-6">
@@ -42,4 +41,5 @@
         <p class="text-sm text-gray-500">No recent notifications.</p>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('components.layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\CBC school\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>
