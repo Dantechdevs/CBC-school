@@ -1,0 +1,78 @@
+{
+    "name": "cbc-school/management-system",
+    "description": "CBC School Management System for Kenyan Schools - Laravel 12",
+    "keywords": [
+        "laravel",
+        "cbc",
+        "kenya",
+        "school",
+        "education"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^3.0",
+        "flowframe/laravel-trend": "0.5",
+        "guzzlehttp/guzzle": "^7.9",
+        "intervention/image": "^3.7",
+        "laravel/framework": "^12.0",
+        "laravel/tinker": "^2.9",
+        "livewire/livewire": "^3.5",
+        "maatwebsite/excel": "^3.1",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "spatie/laravel-activitylog": "^4.9",
+        "spatie/laravel-backup": "^9.1",
+        "spatie/laravel-medialibrary": "^11.0",
+        "spatie/laravel-permission": "^6.9"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/breeze": "^2.3",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.31",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.1",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
