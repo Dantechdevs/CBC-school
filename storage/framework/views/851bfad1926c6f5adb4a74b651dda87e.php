@@ -1,5 +1,4 @@
 <?php $__env->startSection('header', 'Admin Dashboard'); ?>
-
 <?php $__env->startSection('content'); ?>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -42,4 +41,4 @@
     </div>
 </div>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('components.layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\CBC school\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\CBC school\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>
