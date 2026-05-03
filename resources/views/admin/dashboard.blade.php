@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-layouts.app-layout>
     <x-slot name="header">Admin Dashboard</x-slot>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-xl shadow p-6 border-l-4 border-green-500">
@@ -39,4 +39,4 @@
             <p class="text-sm text-gray-500">No recent notifications.</p>
         </div>
     </div>
-</x-app-layout>
+</x-layouts.app-layout>
