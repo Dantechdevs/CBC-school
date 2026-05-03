@@ -179,6 +179,20 @@ Pre-Primary → Lower Primary → Upper Primary → Junior Secondary → Senior 
 - Grade 6 KPSEA candidate registration support
 - Bulk learner data upload to KEMIS
 
+
+See **SETUP.md** for the full installation guide.
+
+## Default Logins (after seeding)
+
+| Role        | Email                      | Password        |
+|-------------|----------------------------|-----------------|
+| super-admin | admin@school.ac.ke         | Admin@1234      |
+| principal   | principal@school.ac.ke     | Principal@1234  |
+| bursar      | bursar@school.ac.ke        | Bursar@1234     |
+
+> ⚠️ Change all passwords on first login.
+
+
 ---
 
 ## Tech Stack

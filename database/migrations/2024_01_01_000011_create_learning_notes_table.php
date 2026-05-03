@@ -22,7 +22,10 @@ return new class extends Migration {
             $table->boolean('is_published')->default(false);
             $table->integer('download_count')->default(0);
             $table->timestamps();
-            $table->index(['grade_level', 'learning_area_id', 'term', 'academic_year']);
+            $table->index(
+                ['grade_level', 'learning_area_id', 'term', 'academic_year'],
+                'ln_grade_area_term_year_index'
+            );
         });
     }
     public function down(): void { Schema::dropIfExists('learning_notes'); }

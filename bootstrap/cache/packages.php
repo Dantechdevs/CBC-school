@@ -11,17 +11,6 @@
       0 => 'Barryvdh\\DomPDF\\ServiceProvider',
     ),
   ),
-  'flowframe/laravel-trend' => 
-  array (
-    'aliases' => 
-    array (
-      'Trend' => 'Flowframe\\Trend\\TrendFacade',
-    ),
-    'providers' => 
-    array (
-      0 => 'Flowframe\\Trend\\TrendServiceProvider',
-    ),
-  ),
   'laravel/breeze' => 
   array (
     'providers' => 
@@ -111,13 +100,6 @@
       0 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
     ),
   ),
-  'spatie/laravel-backup' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\Backup\\BackupServiceProvider',
-    ),
-  ),
   'spatie/laravel-medialibrary' => 
   array (
     'providers' => 
@@ -130,17 +112,6 @@
     'providers' => 
     array (
       0 => 'Spatie\\Permission\\PermissionServiceProvider',
-    ),
-  ),
-  'spatie/laravel-signal-aware-command' => 
-  array (
-    'aliases' => 
-    array (
-      'Signal' => 'Spatie\\SignalAwareCommand\\Facades\\Signal',
-    ),
-    'providers' => 
-    array (
-      0 => 'Spatie\\SignalAwareCommand\\SignalAwareCommandServiceProvider',
     ),
   ),
 );
