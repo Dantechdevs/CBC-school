@@ -1,0 +1,8 @@
+vendor/
+node_modules/
+public/build/
+.env
+storage/app/
+storage/logs/
+bootstrap/cache/
+*.log
