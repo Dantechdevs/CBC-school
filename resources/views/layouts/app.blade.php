@@ -23,7 +23,7 @@
         {{-- Main content --}}
         <div class="pl-64">
             <header class="bg-white shadow h-16 flex items-center px-6 justify-between">
-                <h1 class="text-xl font-semibold text-gray-800">{{ $header ?? 'Dashboard' }}</h1>
+                <h1 class="text-xl font-semibold text-gray-800">@yield('header', 'Dashboard')</h1>
                 <div class="flex items-center gap-4">
                     <span class="text-sm text-gray-500">{{ config('school.name') }}</span>
                     <form method="POST" action="{{ route('logout') }}">
@@ -33,7 +33,7 @@
                 </div>
             </header>
             <main class="p-6">
-                {{ $slot }}
+                @yield('content')
             </main>
         </div>
     </div>
