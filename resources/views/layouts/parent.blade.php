@@ -14,11 +14,11 @@
         <form method="POST" action="{{ route('logout') }}">@csrf<button class="text-sm text-red-600">Logout</button></form>
     </div>
     <nav class="flex gap-2 mb-6">
-        @foreach([['parent.dashboard','Dashboard'],['parent.progress.index','Progress'],['parent.fees.index','Fees'],['parent.notes.index','Notes']] as [$r,$l])
-        <a href="{{ route($r) }}" class="px-4 py-2 rounded-lg text-sm font-medium bg-white border hover:bg-green-50 text-gray-700">{{ $l }}</a>
+        @foreach([['parent.dashboard','Dashboard'],['parent.progress.index','Progress'],['parent.homework.index','Homework'],['parent.fees.index','Fees'],['parent.notes.index','Notes']] as [$r,$l])
+        <a href="{{ route($r) }}" class="px-4 py-2 rounded-lg text-sm font-medium border {{ request()->routeIs($r) ? 'bg-green-700 text-white border-green-700' : 'bg-white hover:bg-green-50 text-gray-700' }}">{{ $l }}</a>
         @endforeach
     </nav>
-    {{ $slot }}
+    @yield('content', $slot ?? '')
 </div>
 @livewireScripts
 </body>

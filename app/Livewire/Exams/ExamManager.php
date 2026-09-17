@@ -47,6 +47,11 @@ class ExamManager extends Component
         $this->validate();
         $teacher = StaffMember::where('user_id', auth()->id())->first();
 
+        if (! $teacher) {
+            $this->addError('examName', 'Your account has no linked staff record, so this exam cannot be attributed to you.');
+            return;
+        }
+
         Exam::create([
             'name'            => $this->examName,
             'grade_level'     => $this->examGrade,
@@ -58,7 +63,7 @@ class ExamManager extends Component
             'pass_mark'       => $this->passMark,
             'exam_date'       => $this->examDate,
             'status'          => 'published',
-            'created_by'      => $teacher?->id ?? 1,
+            'created_by'      => $teacher->id,
         ]);
 
         $this->dispatch('notify', type: 'success', message: 'Exam created successfully.');
@@ -85,6 +90,12 @@ class ExamManager extends Component
     {
         $exam    = Exam::findOrFail($this->selectedExam);
         $teacher = StaffMember::where('user_id', auth()->id())->first();
+
+        if (! $teacher) {
+            $this->addError('examName', 'Your account has no linked staff record, so these marks cannot be attributed to you.');
+            return;
+        }
+
         $saved   = 0;
 
         foreach ($this->marks as $learnerId => $data) {
@@ -99,7 +110,7 @@ class ExamManager extends Component
                     'marks_obtained' => $marks,
                     'total_marks'    => $exam->total_marks,
                     'grade'          => $grade,
-                    'marked_by'      => $teacher?->id ?? 1,
+                    'marked_by'      => $teacher->id,
                 ]
             );
             $saved++;
@@ -120,17 +131,24 @@ class ExamManager extends Component
         };
     }
 
+    protected function isAdminRoute(): bool
+    {
+        return str_starts_with(request()->route()?->getName() ?? '', 'admin.');
+    }
+
     public function render()
     {
         $exams = Exam::with(['learningArea'])
             ->where('academic_year', config('school.academic_year'))
             ->latest()->paginate(20);
 
+        $layout = $this->isAdminRoute() ? 'layouts.admin' : 'layouts.teacher';
+
         return view('livewire.exams.exam-manager', [
             'exams'         => $exams,
             'learningAreas' => LearningArea::where('is_active', true)->get(),
             'gradeLevels'   => config('school.grade_levels'),
             'marks'         => $this->marks,
-        ])->layout('layouts.admin');
+        ])->layout($layout, ['header' => 'Exams']);
     }
 }

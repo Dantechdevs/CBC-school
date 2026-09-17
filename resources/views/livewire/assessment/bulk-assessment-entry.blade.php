@@ -41,6 +41,37 @@
         </div>
     </div>
 
+    {{-- Bulk import from Excel/CSV --}}
+    @if(count($assessmentData))
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold text-gray-700">Bulk Import from Excel/CSV</h3>
+            <a href="{{ route(str_starts_with(request()->route()->getName(), 'admin.') ? 'admin.assessment.import.template' : 'teacher.assessment.import.template') }}"
+               class="text-xs text-blue-600 hover:underline">Download Template</a>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <input wire:model="importFile" type="file" accept=".csv,.xlsx,.xls" class="text-sm">
+            <div wire:loading wire:target="importFile" class="text-xs text-gray-400">Uploading...</div>
+            <button wire:click="importFromExcel" wire:loading.attr="disabled" wire:target="importFromExcel"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                <span wire:loading.remove wire:target="importFromExcel">Import Marks</span>
+                <span wire:loading wire:target="importFromExcel">Importing...</span>
+            </button>
+        </div>
+        @error('importFile') <p class="text-xs text-red-600 mt-2">{{ $message }}</p> @enderror
+        @if($importMatchedCount > 0)
+        <p class="text-xs text-green-700 mt-2">{{ $importMatchedCount }} learner(s) matched and filled in below — review before saving.</p>
+        @endif
+        @if(count($importErrors))
+        <div class="bg-red-50 border border-red-200 rounded-lg p-3 mt-3 max-h-32 overflow-y-auto">
+            @foreach($importErrors as $error)
+            <p class="text-xs text-red-700 py-0.5">{{ $error }}</p>
+            @endforeach
+        </div>
+        @endif
+    </div>
+    @endif
+
     {{-- Assessment table --}}
     @if(count($assessmentData))
     <div class="bg-white rounded-xl shadow-sm overflow-hidden">

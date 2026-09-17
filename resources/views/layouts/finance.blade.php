@@ -19,7 +19,7 @@
                 ['finance.invoices.index','Invoices'],['finance.inventory.index','Inventory'],
                 ['finance.reports.index','Reports'],
             ] as [$route,$label])
-            <a href="{{ route($route) }}" class="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-indigo-100 hover:bg-indigo-800 transition-colors">{{ $label }}</a>
+            <a href="{{ route($route) }}" class="flex items-center px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs($route) ? 'bg-indigo-700 text-white' : 'text-indigo-100 hover:bg-indigo-800' }} transition-colors">{{ $label }}</a>
             @endforeach
         </nav>
         <div class="px-4 py-3 border-t border-indigo-800">
@@ -29,9 +29,9 @@
     </aside>
     <div class="flex-1 flex flex-col overflow-hidden">
         <header class="bg-white h-14 flex items-center px-6 shadow-sm">
-            <h1 class="text-lg font-semibold text-gray-800">{{ $header ?? 'Finance' }}</h1>
+            <h1 class="text-lg font-semibold text-gray-800">@yield('header', $header ?? 'Finance')</h1>
         </header>
-        <main class="flex-1 overflow-y-auto p-6">{{ $slot }}</main>
+        <main class="flex-1 overflow-y-auto p-6">@yield('content', $slot ?? '')</main>
     </div>
 </div>
 @livewireScripts

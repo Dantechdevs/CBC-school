@@ -4,18 +4,27 @@ namespace App\Services;
 
 use App\Models\Assessment;
 use App\Models\Attendance;
+use App\Models\FeeInvoice;
 use App\Models\Learner;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
 class ReportCardService
 {
+    public function __construct(private PathwayService $pathwayService) {}
+
     public function generate(int $learnerId, string $term, string $academicYear): string
     {
         $learner = Learner::with(['schoolClass', 'guardians'])->findOrFail($learnerId);
 
         $assessments = $this->buildAssessmentSummary($learnerId, $term, $academicYear);
         $attendance  = $this->buildAttendanceSummary($learnerId, $term, $academicYear);
+        $feeBalance  = FeeInvoice::where('learner_id', $learnerId)
+            ->where('term', $term)->where('academic_year', $academicYear)
+            ->selectRaw('SUM(total_amount - amount_paid) as balance')->value('balance') ?? 0;
+
+        $showPathways = in_array($learner->grade_level->value ?? '', ['Grade 7', 'Grade 8', 'Grade 9']);
+        $pathways = $showPathways ? $this->pathwayService->forLearner($learnerId, $term, $academicYear) : [];
 
         $pdf = Pdf::loadView('pdf.report-card', [
             'learner'             => $learner,
@@ -23,7 +32,11 @@ class ReportCardService
             'academicYear'        => $academicYear,
             'assessments'         => $assessments,
             'attendance'          => $attendance,
+            'feeBalance'          => $feeBalance,
+            'pathways'            => $pathways,
             'classTeacherRemark'  => '',
+            'schoolCloses'        => config('school.current_term_end'),
+            'nextTermStarts'      => config('school.next_term_start'),
         ])->setPaper('a4', 'portrait');
 
         $fileName = "reports/{$academicYear}/term{$term}/{$learner->admission_number}_report.pdf";
@@ -54,9 +67,9 @@ class ReportCardService
                 ];
             }
             if ($a->assessment_type === 'formative') {
-                $summary[$areaName]['formative'] = $a->rubric_level;
+                $summary[$areaName]['formative'] = $a->rubric_level?->value;
             } else {
-                $summary[$areaName]['summative'] = $a->rubric_level;
+                $summary[$areaName]['summative'] = $a->rubric_level?->value;
             }
 
             // Compute overall — summative takes precedence, else formative

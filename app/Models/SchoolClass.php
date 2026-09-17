@@ -10,6 +10,7 @@ class SchoolClass extends Model {
     public function learners()     { return $this->hasMany(Learner::class, 'class_id'); }
     public function timetable()    { return $this->hasMany(TimetableSlot::class, 'class_id'); }
     public function assessments()  { return $this->hasMany(Assessment::class, 'class_id'); }
+    public function homework()     { return $this->hasMany(Homework::class, 'class_id'); }
     public function scopeActive($q) { return $q->where('is_active', true); }
     public function scopeForYear($q, $y) { return $q->where('academic_year', $y); }
 }

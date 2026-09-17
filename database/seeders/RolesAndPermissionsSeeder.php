@@ -27,6 +27,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'sync kemis','export kemis',
             'view analytics','export reports',
             'manage system settings','manage users','manage roles',
+            'view homework','assign homework','grade homework','submit homework',
         ];
 
         foreach ($permissions as $perm) {
@@ -37,22 +38,26 @@ class RolesAndPermissionsSeeder extends Seeder
             'super-admin'      => $permissions,
             'principal'        => array_diff($permissions, ['manage system settings','manage roles']),
             'deputy-principal' => ['view students','view assessments','view timetable','manage timetable',
-                                   'view notes','view exams','view analytics','view attendance','mark attendance'],
+                                   'view notes','view exams','view analytics','view attendance','mark attendance',
+                                   'view homework'],
             'hod'              => ['view students','view assessments','create assessments','edit assessments',
                                    'view notes','upload notes','publish notes','manage curriculum',
-                                   'view exams','manage exams','enter marks'],
+                                   'view exams','manage exams','enter marks',
+                                   'view homework','assign homework','grade homework'],
             'class-teacher'    => ['view students','view assessments','create assessments','edit assessments',
                                    'view notes','upload notes','view timetable','enter marks',
-                                   'view attendance','mark attendance'],
+                                   'view attendance','mark attendance',
+                                   'view homework','assign homework','grade homework'],
             'teacher'          => ['view students','view assessments','create assessments',
-                                   'view notes','upload notes','view timetable','enter marks'],
+                                   'view notes','upload notes','view timetable','enter marks',
+                                   'view homework','assign homework','grade homework'],
             'bursar'           => ['view students','view fees','manage fees','record payments',
                                    'view finance reports','export finance','view inventory','manage inventory',
                                    'issue items','receive items'],
             'librarian'        => ['view inventory','manage inventory','issue items','receive items'],
             'storekeeper'      => ['view inventory','manage inventory','issue items','receive items'],
-            'parent'           => ['view report cards','view notes','view fees'],
-            'learner'          => ['view notes','view timetable'],
+            'parent'           => ['view report cards','view notes','view fees','view homework'],
+            'learner'          => ['view notes','view timetable','view homework','submit homework'],
         ];
 
         foreach ($rolePermissions as $roleName => $rolePerms) {

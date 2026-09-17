@@ -83,6 +83,11 @@ class LearningNotesList extends Component
         $note->delete();
     }
 
+    protected function isAdminRoute(): bool
+    {
+        return str_starts_with(request()->route()?->getName() ?? '', 'admin.');
+    }
+
     public function render()
     {
         $notes = LearningNote::with(['teacher', 'learningArea'])
@@ -93,9 +98,11 @@ class LearningNotesList extends Component
             ->latest()
             ->paginate(20);
 
+        $layout = $this->isAdminRoute() ? 'layouts.admin' : 'layouts.teacher';
+
         return view('livewire.notes.learning-notes-list', [
             'notes'         => $notes,
             'learningAreas' => LearningArea::orderBy('name')->get(),
-        ])->layout('layouts.admin');
+        ])->layout($layout, ['header' => 'Learning Notes']);
     }
 }

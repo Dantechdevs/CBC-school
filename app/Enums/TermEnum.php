@@ -16,4 +16,9 @@ enum TermEnum: string
             self::Term3 => 'T3',
         };
     }
+
+    public function label(): string
+    {
+        return $this->value;
+    }
 }

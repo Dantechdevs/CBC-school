@@ -2,6 +2,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model {
+    protected $table = 'attendance';
     protected $fillable = ['learner_id','class_id','date','status','session','remarks','recorded_by'];
     protected $casts = ['date' => 'date'];
     public function learner()    { return $this->belongsTo(Learner::class); }

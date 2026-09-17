@@ -46,6 +46,12 @@ class InventoryList extends Component
             return;
         }
 
+        $staffId = auth()->user()->staffMember?->id;
+        if (! $staffId) {
+            $this->addError('issueQty', 'Your account has no linked staff record, so this issue cannot be attributed to you.');
+            return;
+        }
+
         InventoryTransaction::create([
             'item_id'          => $item->id,
             'type'             => 'issued',
@@ -53,7 +59,7 @@ class InventoryList extends Component
             'balance_after'    => $item->quantity_in_stock - $this->issueQty,
             'learner_id'       => $this->issueType === 'learner' ? $this->issueTo : null,
             'staff_id'         => $this->issueType === 'staff' ? $this->issueTo : null,
-            'processed_by'     => auth()->user()->staffMember->id,
+            'processed_by'     => $staffId,
             'academic_year'    => config('school.academic_year'),
             'remarks'          => $this->issueRemarks,
             'transaction_date' => today(),
@@ -64,6 +70,11 @@ class InventoryList extends Component
 
         $this->closeIssueModal();
         session()->flash('success', "{$this->issueQty} {$item->unit}(s) of '{$item->name}' issued successfully.");
+    }
+
+    protected function isFinanceRoute(): bool
+    {
+        return str_starts_with(request()->route()?->getName() ?? '', 'finance.');
     }
 
     public function render()
@@ -77,7 +88,9 @@ class InventoryList extends Component
             ->orderBy('name')
             ->paginate($this->perPage);
 
+        $layout = $this->isFinanceRoute() ? 'layouts.finance' : 'layouts.admin';
+
         return view('livewire.inventory.inventory-list', ['items' => $items])
-            ->layout('layouts.admin');
+            ->layout($layout, ['header' => 'Inventory']);
     }
 }

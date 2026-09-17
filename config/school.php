@@ -9,6 +9,9 @@ return [
     'email'         => env('SCHOOL_EMAIL', ''),
     'academic_year' => (int) env('CURRENT_ACADEMIC_YEAR', now()->year),
     'current_term'  => (int) env('CURRENT_TERM', 1),
+    'current_term_start' => env('CURRENT_TERM_START'), // e.g. '2026-09-01' — when this term began
+    'current_term_end'  => env('CURRENT_TERM_END'),   // e.g. '2026-10-09' — school closing date for this term
+    'next_term_start'   => env('NEXT_TERM_START'),    // e.g. '2027-01-04' — when the next term begins
 
     'grade_levels' => [
         'pre_primary'     => ['PP1', 'PP2'],
@@ -26,6 +29,15 @@ return [
     ],
 
     'terms' => [1 => 'Term 1', 2 => 'Term 2', 3 => 'Term 3'],
+
+    // Groups learning areas into the three CBC Senior School pathways for
+    // pathway-readiness reporting at JSS level (Grade 7-9) and report cards.
+    // Matched case-insensitively against the learning area name.
+    'pathways' => [
+        'STEM' => ['Mathematics', 'Integrated Science', 'Pre-Technical Studies', 'Agriculture'],
+        'Social Sciences' => ['Social Studies', 'CRE', 'IRE', 'HRE', 'English', 'Kiswahili'],
+        'Arts & Sports Science' => ['Creative Arts', 'Physical', 'Music', 'Sports'],
+    ],
 
     'assessment_weights' => [
         'formative'  => 40, // 40%

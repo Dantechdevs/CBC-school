@@ -1,11 +1,25 @@
 <div>
     {{-- Header bar --}}
     <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-gray-800">Learners Register</h2>
-        <button wire:click="create" class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-800">
-            + Enrol Learner
-        </button>
+        <div>
+            <h2 class="text-xl font-bold text-gray-800">Learners Register</h2>
+            <p class="text-xs text-gray-400">{{ number_format($totalCount) }} registered</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.students.import') }}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
+                Import Learners
+            </a>
+            <button wire:click="create" class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-800">
+                + Enrol Learner
+            </button>
+        </div>
     </div>
+
+    @if($flashMessage)
+    <div class="bg-green-50 border border-green-200 text-green-800 text-sm rounded-lg px-4 py-3 mb-5">
+        {{ $flashMessage }}
+    </div>
+    @endif
 
     {{-- Filters --}}
     <div class="bg-white rounded-xl shadow-sm p-4 mb-5 flex flex-wrap gap-4">
@@ -97,4 +111,123 @@
             {{ $learners->links() }}
         </div>
     </div>
+
+    {{-- Create/Edit Modal --}}
+    @if($showFormModal)
+    <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" wire:click.self="closeModals">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-800">{{ $isEditing ? 'Edit Learner' : 'Enrol Learner' }}</h3>
+                <button wire:click="closeModals" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="col-span-2">
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Admission Number</label>
+                    <input wire:model="admissionNumber" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    @error('admissionNumber') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">First Name</label>
+                    <input wire:model="firstName" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    @error('firstName') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Last Name</label>
+                    <input wire:model="lastName" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    @error('lastName') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Gender</label>
+                    <select wire:model="gender" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Date of Birth</label>
+                    <input wire:model="dateOfBirth" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    @error('dateOfBirth') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Grade Level</label>
+                    <select wire:model="gradeLevel" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="">Select...</option>
+                        @foreach(config('school.grade_levels') as $level => $grades)
+                            <optgroup label="{{ str_replace('_',' ', ucwords($level)) }}">
+                                @foreach($grades as $grade)
+                                    <option value="{{ $grade }}">{{ $grade }}</option>
+                                @endforeach
+                            </optgroup>
+                        @endforeach
+                    </select>
+                    @error('gradeLevel') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Class</label>
+                    <select wire:model="classId" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="">Unassigned</option>
+                        @foreach($classes as $class)
+                            <option value="{{ $class->id }}">{{ $class->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Boarding Status</label>
+                    <select wire:model="boardingStatus" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="day">Day</option>
+                        <option value="boarding">Boarding</option>
+                    </select>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-xs font-medium text-gray-600 mb-1">KEMIS UPI (optional)</label>
+                    <input wire:model="kemisUpi" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                </div>
+            </div>
+            <div class="mt-5 flex justify-end gap-2">
+                <button wire:click="closeModals" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                <button wire:click="save" class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-800">
+                    {{ $isEditing ? 'Save Changes' : 'Enrol Learner' }}
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- View Detail Modal --}}
+    @if($showViewModal && $viewingLearner)
+    <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" wire:click.self="closeModals">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-800">{{ $viewingLearner->full_name }}</h3>
+                <button wire:click="closeModals" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                <div><p class="text-gray-400 text-xs">Admission No.</p><p class="font-medium text-gray-800">{{ $viewingLearner->admission_number }}</p></div>
+                <div><p class="text-gray-400 text-xs">KEMIS UPI</p><p class="font-medium text-gray-800">{{ $viewingLearner->kemis_upi ?? '—' }}</p></div>
+                <div><p class="text-gray-400 text-xs">Grade</p><p class="font-medium text-gray-800">{{ $viewingLearner->grade_level?->value }}</p></div>
+                <div><p class="text-gray-400 text-xs">Class</p><p class="font-medium text-gray-800">{{ $viewingLearner->schoolClass->name ?? '—' }}</p></div>
+                <div><p class="text-gray-400 text-xs">Gender</p><p class="font-medium text-gray-800">{{ ucfirst($viewingLearner->gender) }}</p></div>
+                <div><p class="text-gray-400 text-xs">Age</p><p class="font-medium text-gray-800">{{ $viewingLearner->age }}</p></div>
+                <div><p class="text-gray-400 text-xs">Boarding Status</p><p class="font-medium text-gray-800">{{ ucfirst($viewingLearner->boarding_status) }}</p></div>
+                <div><p class="text-gray-400 text-xs">Status</p><p class="font-medium text-gray-800">{{ $viewingLearner->is_active ? 'Active' : 'Inactive' }}</p></div>
+            </div>
+            <div class="border-t border-gray-100 pt-3">
+                <p class="text-xs text-gray-400 mb-2">Guardians</p>
+                @forelse($viewingLearner->guardians as $guardian)
+                <div class="flex items-center justify-between text-sm py-1">
+                    <span class="text-gray-800">{{ $guardian->full_name }} <span class="text-xs text-gray-400">({{ ucfirst($guardian->relationship) }})</span></span>
+                    <span class="text-gray-500">{{ $guardian->phone_number }}</span>
+                </div>
+                @empty
+                <p class="text-sm text-gray-400">No guardians linked yet.</p>
+                @endforelse
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button wire:click="generateReport({{ $viewingLearner->id }})" class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700">
+                    Generate Report Card
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

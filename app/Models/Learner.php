@@ -16,7 +16,7 @@ class Learner extends Model
         'date_of_birth', 'gender', 'grade_level', 'class_id', 'stream',
         'admission_date', 'boarding_status', 'special_needs', 'special_needs_details',
         'previous_school', 'birth_certificate_number', 'nhif_number',
-        'academic_year', 'is_active',
+        'academic_year', 'is_active', 'user_id',
     ];
 
     protected $casts = [
@@ -29,6 +29,7 @@ class Learner extends Model
 
     // ── Relationships ────────────────────────────────────────────
     public function schoolClass()   { return $this->belongsTo(SchoolClass::class, 'class_id'); }
+    public function user()          { return $this->belongsTo(User::class); }
     public function guardians()     { return $this->belongsToMany(Guardian::class, 'learner_guardian')->withPivot('is_primary'); }
     public function assessments()   { return $this->hasMany(Assessment::class); }
     public function attendance()    { return $this->hasMany(Attendance::class); }
@@ -36,6 +37,7 @@ class Learner extends Model
     public function feePayments()   { return $this->hasMany(FeePayment::class); }
     public function examResults()   { return $this->hasMany(ExamResult::class); }
     public function portfolio()     { return $this->hasMany(PortfolioItem::class); }
+    public function homeworkSubmissions() { return $this->hasMany(HomeworkSubmission::class); }
 
     // ── Accessors ────────────────────────────────────────────────
     public function getFullNameAttribute(): string

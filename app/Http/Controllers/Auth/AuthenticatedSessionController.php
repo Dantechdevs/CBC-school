@@ -38,6 +38,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('teacher.dashboard');
         } elseif ($user->hasRole('parent')) {
             return redirect()->route('parent.dashboard');
+        } elseif ($user->hasRole('learner')) {
+            return redirect()->route('learner.dashboard');
         } elseif ($user->hasRole(['bursar', 'accountant'])) {
             return redirect()->route('finance.dashboard');
         }

@@ -127,7 +127,35 @@ tr:nth-child(even) td{background:#fafafa;}
     @endforeach
 </div>
 
+@if(!empty($pathways))
+<div class="section-head" style="margin-top:8px">Pathway Performance (Senior School Readiness)</div>
+<div style="display:flex;gap:0;border:1px solid #e5e7eb;border-top:none;">
+    @foreach($pathways as $pathwayName => $data)
+    <div style="flex:1;text-align:center;padding:10px;border-right:1px solid #e5e7eb;">
+        <div style="font-size:8px;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;">{{ $pathwayName }}</div>
+        <div style="font-size:16px;font-weight:bold;color:#111827;margin-top:2px;">
+            {{ $data['percentage'] !== null ? number_format($data['percentage'], 1).'%' : '—' }}
+        </div>
+        <div style="font-size:8px;color:#6b7280;">{{ $data['points'] }} pts</div>
+    </div>
+    @endforeach
+</div>
+@endif
+
+<div class="remarks-row" style="margin-top:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;">
+    <span class="remarks-label">Fee Balance</span>
+    <div style="font-size:13px;font-weight:bold;color:{{ $feeBalance > 0 ? '#991b1b' : '#166534' }}">
+        KES {{ number_format($feeBalance, 2) }}
+    </div>
+</div>
+
 <div class="footer">
+    @if($schoolCloses || $nextTermStarts)
+    <div style="display:flex;justify-content:space-between;padding:0 8px 6px 8px;">
+        <span>@if($schoolCloses)School Closes On: {{ \Illuminate\Support\Carbon::parse($schoolCloses)->format('d M Y') }}@endif</span>
+        <span>@if($nextTermStarts)Next Term Begins: {{ \Illuminate\Support\Carbon::parse($nextTermStarts)->format('d M Y') }}@endif</span>
+    </div>
+    @endif
     Generated on {{ now()->format('d M Y') }} &nbsp;|&nbsp; {{ config('school.name') }} School Management System
     <br>This is a computer-generated report. No signature required if generated from the school portal.
 </div>

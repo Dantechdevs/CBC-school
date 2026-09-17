@@ -47,9 +47,20 @@ class FeePayment extends Component
         }
     }
 
-    public function printReceipt(int $invoiceId): void
+    public function printReceipt(int $invoiceId)
     {
-        $this->redirectRoute('admin.fees.receipt', $invoiceId);
+        $invoice = FeeInvoice::findOrFail($invoiceId);
+        $payment = $invoice->payments()->where('status', 'confirmed')->latest('paid_at')->first();
+
+        if (! $payment) {
+            session()->flash('error', 'No confirmed payment found for this invoice yet.');
+            return;
+        }
+
+        $service = app(\App\Services\ReceiptService::class);
+        $path = $service->generate($payment->id);
+
+        return $this->redirect(\Illuminate\Support\Facades\Storage::url($path));
     }
 
     public function render()

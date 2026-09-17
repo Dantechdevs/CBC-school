@@ -17,4 +17,5 @@ class User extends Authenticatable
 
     public function staffMember() { return $this->hasOne(StaffMember::class); }
     public function guardian()    { return $this->hasOne(Guardian::class); }
+    public function learner()     { return $this->hasOne(Learner::class); }
 }
