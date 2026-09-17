@@ -15,9 +15,11 @@
 - [Configuration](#configuration)
 - [Modules](#modules)
 - [User Roles](#user-roles)
+- [System Settings Module](#️-system-settings-module)
 - [API Integrations](#api-integrations)
 - [Database](#database)
 - [Testing](#testing)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -373,6 +375,7 @@ app/
 │   ├── Notifications/
 │   ├── Parents/
 │   ├── Analytics/
+│   ├── Settings/
 │   └── KEMIS/
 ```
 
@@ -396,6 +399,215 @@ app/
 | Analytics | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
 
 > ✅ Full access &nbsp;|&nbsp; 👁️ View only &nbsp;|&nbsp; ❌ No access
+
+---
+
+## ⚙️ System Settings Module
+
+A centralized **Settings** module lets `super-admin` and `principal` roles configure every aspect of the school's setup without touching code. Settings are grouped into categories, each with its own permission gate, audit trail, and cache layer for fast reads.
+
+```
+app/
+├── Modules/
+│   ├── Settings/
+│   │   ├── General/
+│   │   ├── Academic/
+│   │   ├── Students/
+│   │   ├── StaffHR/
+│   │   ├── FeesFinance/
+│   │   ├── Attendance/
+│   │   ├── ExamsAssessment/
+│   │   ├── Communication/
+│   │   ├── Timetable/
+│   │   ├── Library/
+│   │   ├── Transport/
+│   │   ├── Hostel/
+│   │   ├── SystemAccess/
+│   │   ├── Branding/
+│   │   └── Integrations/
+```
+
+Settings are stored in a `settings` table as key-value pairs (`group`, `key`, `value`, `type`, `is_encrypted`), cached via Redis, and exposed through a `Setting::get('group.key')` helper. Sensitive values (API keys, secrets) are encrypted at rest using Laravel's `Crypt` facade.
+
+### 1. General School Settings
+
+| Setting | Field Type | Notes |
+|---|---|---|
+| School Name | Text | Appears on reports, receipts, login page |
+| School Code / KNEC Code | Text | Used in KNEC/KEMIS submissions |
+| School Type | Select | Primary / Junior Secondary / Secondary |
+| Curriculum | Select | CBC (extensible for CBE, IGCSE, etc.) |
+| Motto | Text | Displayed on report cards |
+| School Logo | Image upload | PNG/SVG, used across the system |
+| School Address | Textarea | Physical address |
+| County | Select | 47 Kenyan counties |
+| Sub-County | Select (dependent) | Filtered by County |
+| Ward | Select (dependent) | Filtered by Sub-County |
+| Phone Number | Text | Validated Kenyan format |
+| Email Address | Email | System sender/reply-to |
+| Website | URL | Optional |
+| School Registration Number | Text | Ministry of Education registration |
+
+### 2. Academic Settings
+
+- Academic Year (e.g. 2026) — with open/close status
+- Current Term (Term 1 / 2 / 3) — drives active-term logic app-wide
+- Term Start & End Dates — used for fee proration and attendance calendars
+- Classes / Grades — PP1–Grade 12, toggle which are active for this school
+- Streams — e.g. Grade 4 North, Grade 4 South
+- Subjects — Junior/Senior Secondary numeric-mark subjects
+- Learning Areas — CBC learning areas mapped per grade
+- Grading System — EE/ME/AE/BE for Primary; letter/points for Jr/Sr Secondary
+- Assessment Types — Formative, Summative, CAT, Exam
+- Pass Mark — per subject/learning area, used in reports
+- Promotion Rules — auto-promote thresholds, repeat/hold-back criteria
+
+### 3. Student Settings
+
+- Admission Number Format — e.g. `SCH/{YEAR}/{SEQ}`
+- Student ID Format — for ID cards and barcode scanning
+- Student Categories — Day / Boarding, Special Needs flags
+- House/Team Settings — house names, colours, points system
+- Parent/Guardian Fields — required vs optional fields, relationship types
+- Student Statuses — Active, Transferred, Graduated, Suspended, Dropped
+- Admission Settings — intake windows, required documents, admission workflow steps
+
+### 4. Staff & Teacher Settings
+
+- Staff ID Format — e.g. `STF/{YEAR}/{SEQ}`
+- Departments — e.g. Languages, Sciences, Humanities
+- Staff Categories — Teaching / Non-teaching / Support
+- Teacher Roles — HOD, Class Teacher, Subject Teacher
+- Teaching Subjects — subject-to-teacher assignment rules
+- Employment Types — TSC, BOM, Contract, Volunteer
+- Teacher Attendance Settings — clock-in/out method, grace period, lateness threshold
+
+### 5. Fees & Finance Settings
+
+- Currency — KES (fixed, formatted with `Intl.NumberFormat`)
+- Fee Categories — Tuition, Boarding, Transport, Activity, Exam
+- Fee Structure — per grade, term, and day/boarding category
+- Payment Methods — M-Pesa, Bank, Cash, Cheque
+- Payment Receipt Format — numbering sequence, PDF template
+- Invoice Settings — numbering, due-date rules, auto-generation schedule
+- Discounts — sibling discount, early-payment discount
+- Scholarships/Bursaries — CDF, NG-CDF, county bursary tracking
+- Arrears Settings — aging buckets, carry-forward rules, reminder triggers
+- M-Pesa Settings — Paybill/Till number, shortcode, passkey, callback URL, environment (sandbox/production)
+
+### 6. Attendance Settings
+
+- Student Attendance — per-lesson or once-daily marking mode
+- Staff Attendance — biometric, QR, or manual entry
+- Attendance Statuses — Present, Absent, Late, Excused, On Leave
+- Late Arrival Rules — cut-off time, escalation after N late marks
+- Absence Notifications — auto-SMS to parent after unexplained absence
+- Attendance Reports — daily, weekly, termly summaries and heatmaps
+
+### 7. Examination & Assessment Settings
+
+- Exams — types, weighting, publish/lock controls
+- CATs — continuous assessment test scheduling
+- Assignments — submission deadlines, late-submission penalty
+- CBC Assessments — strand/sub-strand rubric configuration
+- Competencies — the 7 CBC core competencies tracked per learner
+- Grading — grade boundaries, rubric-to-grade mapping
+- Report Cards — template selection, remarks requirements, sign-off workflow
+- Position/Ranking Settings — enable/disable class ranking (optional under CBC)
+- Academic Performance Reports — comparison periods, export formats
+
+### 8. Communication Settings
+
+- SMS Gateway — provider selection (Africa's Talking), sender ID, credit balance alerts
+- Email Settings — SMTP/Mailgun credentials, default sender name
+- Parent Notifications — event triggers (fees, reports, absenteeism, circulars)
+- Teacher Notifications — assignment reminders, lesson plan approvals
+- Bulk SMS — targeting rules (by grade, stream, boarding status), rate limiting
+- Announcement Settings — notice board visibility, expiry dates, approval workflow
+
+### 9. Timetable Settings
+
+- Periods — number of periods per day, duration
+- Lessons — learning area to period mapping
+- Breaks — tea break, lunch break durations and placement
+- School Hours — opening/closing time, boarding vs day variations
+- Teacher Timetable — max periods per teacher, conflict detection
+- Class Timetable — publishing and versioning
+- Room/Venue Settings — labs, halls, capacity limits
+
+### 10. Library Settings
+
+- Books — catalog fields (title, author, ISBN, category, copies)
+- Categories — Dewey or custom classification
+- Authors — author master list
+- Publishers — publisher master list
+- Borrowing Rules — max books per learner/staff, renewal limits
+- Fines — overdue fine rate, damage/loss charges
+- Loan Period — default and category-specific durations
+
+### 11. Transport Settings
+
+- Vehicles — registration, capacity, insurance/inspection expiry alerts
+- Routes — route names, stages, distance
+- Drivers — license details, contact, assigned vehicle
+- Transport Fees — per route/zone pricing
+- Student Allocation — route/vehicle assignment per learner
+
+### 12. Hostel / Boarding Settings
+
+- Dormitories — name, capacity, gender designation
+- Beds — bed numbering and occupancy tracking
+- House Parents — staff assigned to each dormitory
+- Boarding Fees — per term, linked to Fees & Finance settings
+- Allocation — auto/manual bed assignment, term-to-term re-allocation
+
+### 13. System Settings
+
+- User Roles & Permissions — powered by Spatie Laravel Permission
+- Login Settings — 2FA toggle, session timeout, allowed login methods
+- Password Policies — minimum length, complexity, expiry, reuse prevention
+- Audit Logs — who changed what setting and when
+- Backup — schedule, retention, destination (local/S3)
+- Cache — clear/warm cache controls for settings and views
+- Notifications — system-level alert preferences for admins
+- System Version — current build, changelog, update checker
+
+### 14. Logo & Branding
+
+- School Logo — used in navbar, login, reports
+- Favicon — browser tab icon
+- Login Background — image or colour
+- Primary Colour — theme accent colour (hex)
+- Secondary Colour — theme secondary colour (hex)
+- Report Card Header/Footer — custom text/images per document type
+- Receipt Branding — logo and footer text on payment receipts
+
+### 15. Integrations
+
+| Integration | Key Settings |
+|---|---|
+| M-Pesa | Consumer key/secret, shortcode, passkey, environment |
+| SMS Provider | API key, username, sender ID |
+| Email/SMTP | Host, port, encryption, credentials |
+| Google reCAPTCHA | Site key, secret key, enable on login/admission forms |
+| WhatsApp | Business API token, phone number ID |
+| Payment Gateway | Additional gateways beyond M-Pesa (e.g. card processors) |
+| API Keys | System-generated keys for third-party/KEMIS access |
+
+### Access Control for Settings
+
+| Setting Group | Super Admin | Principal | Bursar | HOD |
+|---|:---:|:---:|:---:|:---:|
+| General | ✅ | 👁️ | ❌ | ❌ |
+| Academic | ✅ | ✅ | ❌ | 👁️ |
+| Fees & Finance | ✅ | 👁️ | ✅ | ❌ |
+| Communication | ✅ | ✅ | ❌ | ❌ |
+| System & Access | ✅ | ❌ | ❌ | ❌ |
+| Integrations | ✅ | ❌ | ❌ | ❌ |
+
+> ✅ Full access &nbsp;|&nbsp; 👁️ View only &nbsp;|&nbsp; ❌ No access
+
+Every change to a settings value is written to `settings_audit_log` with `user_id`, `group`, `key`, `old_value`, `new_value`, and `changed_at`, so principals can review what was modified before a term rollover or audit.
 
 ---
 
@@ -434,18 +646,20 @@ guardians                 — Parent/guardian records
 classes                   — Grade, stream, academic year
 learning_areas            — CBC learning areas per grade
 strands                   — Strands per learning area
-sub_strands               — Sub-strands per strand
+sub_strands                — Sub-strands per strand
 assessments               — EE/ME/AE/BE entries per learner
-exam_results              — Numeric marks for Jr/Sr Secondary
-fee_structures            — Fee setup per grade/term
-fee_invoices              — Per-learner invoices
-fee_payments              — Payment records (M-Pesa, bank)
-inventory_items           — Assets, books, equipment
-inventory_transactions    — Issue, return, disposal events
-staff                     — Teacher and non-teaching staff
-timetable_slots           — Scheduled learning periods
-notifications_log         — SMS and email delivery log
-kemis_sync_log            — KEMIS data sync history
+exam_results               — Numeric marks for Jr/Sr Secondary
+fee_structures             — Fee setup per grade/term
+fee_invoices                — Per-learner invoices
+fee_payments                — Payment records (M-Pesa, bank)
+inventory_items             — Assets, books, equipment
+inventory_transactions       — Issue, return, disposal events
+staff                       — Teacher and non-teaching staff
+timetable_slots             — Scheduled learning periods
+notifications_log           — SMS and email delivery log
+kemis_sync_log               — KEMIS data sync history
+settings                    — Key-value system configuration
+settings_audit_log           — History of settings changes
 ```
 
 Generate ERD:
@@ -479,6 +693,7 @@ php artisan test --coverage
 - [x] SMS & push notifications
 - [x] Inventory management
 - [x] Learning notes & resources module
+- [x] Centralized system settings module
 - [ ] Mobile app (Flutter — Android & iOS)
 - [ ] Offline mode for low-connectivity schools
 - [ ] AI-powered learner progress recommendations
