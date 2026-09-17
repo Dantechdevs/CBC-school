@@ -51,7 +51,7 @@ return [
     ],
 
     'sms' => [
-        'enabled'   => !empty(env('AT_API_KEY')),
+        'enabled'   => !empty($k = env('AT_API_KEY')) && $k !== 'your_api_key_here',
         'provider'  => 'africastalking',
         'sender_id' => env('AT_SENDER_ID', 'SCHOOL'),
     ],
