@@ -18,7 +18,7 @@
   <img src="https://img.shields.io/badge/AI-Claude API-7c3aed?style=flat" />
   <img src="https://img.shields.io/badge/SMS-Africa's Talking-f59e0b?style=flat" />
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat" />
-  <img src="https://img.shields.io/badge/Built%20by-DanTech%20Developers-6d28d9?style=flat" />
+  <img src="https://img.shields.io/badge/Built%20by-Dantechdevs%20Developers-6d28d9?style=flat" />
 </p>
 
 ---
@@ -1575,11 +1575,11 @@ Please follow [PSR-12](https://www.php-fig.org/psr/psr-12/) coding standards and
 - [Africa's Talking](https://africastalking.com) — SMS gateway
 - [Office of the Data Protection Commissioner, Kenya](https://www.odpc.go.ke) — Data Protection Act, 2019 guidance
 - [Laravel](https://laravel.com) — The PHP framework for web artisans
-- [Anthropic Claude](https://anthropic.com) — AI tools engine
+
 
 ---
 
 <p align="center">
-  <strong>ElimuMS — Built with ❤️ by <a href="https://ngwasidaniel.vercel.app/#contact">DanTech Developers</a></strong><br/>
+  <strong>ElimuMS — Built with ❤️ by <a href="https://ngwasidaniel.vercel.app/#contact">Dantechdevs Developers</a></strong><br/>
   <em>"Smart Today. Success Tomorrow."</em>
 </p>
